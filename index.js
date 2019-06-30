@@ -1,5 +1,4 @@
 
-//PC/MOBILE view controller
   let switchTomobile = (w)=>{
     if(w <= 746){ 
         $i('mobile-view').style.display = "flex";
@@ -14,6 +13,16 @@
   const $i = document.getElementById.bind(document);
   const $c = document.getElementsByClassName.bind(document);
   const $t = document.getElementsByTagName.bind(document);
+  
+  let pageState =$i('carousal-container');
+  let pageStateY =pageState.getBoundingClientRect().top;
+  console.log(pageStateY);
+  if(pageStateY<0.0){
+    console.log(pageStateY);
+    $i('nav-container').style.height = "0px";
+}
+
+//PC/MOBILE view controller
 
   //Switch to mobile view when window is resized to mobile width
   window.addEventListener("resize",e=>{
@@ -22,8 +31,10 @@
   || document.body.clientWidth;
   switchTomobile(ww2);
   })
+
 //check if everything has finish loading
 document.addEventListener('DOMContentLoaded', e=>{
+ 
   let ww = window.innerWidth
   || document.documentElement.clientWidth
   || document.body.clientWidth;
@@ -38,10 +49,11 @@ document.addEventListener('DOMContentLoaded', e=>{
     //Control scroll to top button. Hide when carousal is in view
     window.addEventListener('scroll', () => {
         let currentScroll = body.getBoundingClientRect().y;
-        let positionOfnav = contents.getBoundingClientRect().y;
+        // let positionOfnav = contents.getBoundingClientRect().y;
         //console.log("current" + currentScroll);
         if (currentScroll < prevScroll) {
             //console.log("srollDown " + currentScroll);
+            $i('nav-container').style.height = "0";
             scrollUp.style.height = "80px";
         } else if (currentScroll > prevScroll) {
             let carousalPos = $i('carousal-container').getBoundingClientRect().top;;
@@ -55,10 +67,16 @@ document.addEventListener('DOMContentLoaded', e=>{
     
 //Scrolling function
     let scroller = e =>{
+        $i('chosen-content').scrollIntoView({
+             behavior: 'smooth',
+            block:'start',
+            inline:'nearest'
+        })
         $i(e.target.className).scrollIntoView({
             behavior: 'smooth',
             block:'start',
-            inline:'nearest'
+            inline:'nearest',
+            top:'0'
         });
     }
 
@@ -135,19 +153,7 @@ document.addEventListener('DOMContentLoaded', e=>{
     });
 
     //Highlight selected navigation pane expansion
-    $$('nav ul').forEach(ul => {
-        ul.addEventListener('click', e => {
-            scroller(e);
-            $i(e.target.className).style.transition = "background-color 0.3s linear";
-            $i(e.target.className).style.backgroundColor = "rgb(124, 252, 0,1)";
-      let  counter = 0;
-        setTimeout(() => {
-            $i(e.target.className).style.backgroundColor = "";
-            counter++;
-        }, 500);
-        })
     
-    })
     //Scroll to middle first , when lcicked again scroll to top
     let upCount = 0;
     $i('scroll-up').addEventListener('click', e => {
@@ -167,30 +173,31 @@ document.addEventListener('DOMContentLoaded', e=>{
     })
     
     //Controller of thin bar at the the top and corresponding actins
-    let topics = $i('topics');
-    topics.style.opacity = "0";
+  
+  
+
     let bar = document.querySelector("#progress");
     window.addEventListener("scroll", () => {
         let max = document.body.scrollHeight - innerHeight;
         let percentageOfbar = (pageYOffset / max)*100;
         console.log(percentageOfbar);
         bar.style.width = `${(pageYOffset / max) * 100}%`;
-        if(percentageOfbar>=33.3){
+        if(percentageOfbar>=0.3){
             $i('social-media-items').style.width = "40px";
             if(percentageOfbar>=43.00){
-                $i('nav-overlay').style.opacity = "0"; //Hide conatiner of sgs behind nav when scroll
-                $i('nav-container').style.opacity = "0"; //Hide the nav when scroll down
+               //Hide conatiner of sgs behind nav when scroll
+                $i('nav-container').style.height = "0"; //Hide the nav when scroll down
             }
         }
         else{
             $i('social-media-items').style.width = "0px";
-            $i('nav-overlay').style.opacity = "1";
-            $i('nav-container').style.opacity = "1";
+            $i('nav-container').style.height = "95px";
+        
         }
         if (percentageOfbar>=99.0) {
-            topics.style.opacity = "1";
+           
         } else {
-            topics.style.opacity = "0";
+            
         }
      
     });
@@ -217,5 +224,6 @@ document.addEventListener('DOMContentLoaded', e=>{
     $i('viewed-image').addEventListener('click', ()=>{
         $i('image-display').style.height = "0%";
     })
+
     
 })
